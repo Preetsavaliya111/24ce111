@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2 Player Stopwatch Game</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        h1 {
+            font-size: 3em;
+            margin-top: 30px;
+            color: #ff6f61;
+            text-shadow: 2px 2px 12px #fff3e0;
+            letter-spacing: 2px;
+            animation: bounce 1.5s infinite alternate;
+        }
+        @keyframes bounce {
+            to { transform: translateY(-12px); }
+        }
+        .cartoon {
+            width: 120px;
+            margin: 0 20px 20px 20px;
+            vertical-align: middle;
+            animation: wiggle 2s infinite;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg);}
+            50% { transform: rotate(5deg);}
+        }
+        #targetTimeDiv {
+            background: #fffbe6;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            margin: 30px auto;
+            padding: 30px 20px;
+            max-width: 400px;
+            border: 3px dashed #ffb347;
+            font-size: 1.5em;
+            color: #ff6f61;
+            font-weight: bold;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse {
+            to { box-shadow: 0 0 32px 8px #ffb34744; }
+        }
+        .playerDiv {
+            display: inline-block;
+            width: 45vw;
+            min-width: 260px;
+            max-width: 400px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            margin: 20px 2vw;
+            padding: 30px 20px;
+            border: 3px solid #6dd5ed;
+            vertical-align: top;
+            position: relative;
+            animation: fadeIn 1s;
+        }
+        .playerDiv.player2 {
+            border-color: #f7797d;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        .playerBtn {
+            font-size: 2em;
+            padding: 20px 60px;
+            margin: 18px 8px;
+            border-radius: 18px;
+            border: none;
+            background: linear-gradient(90deg, #ff6f61 0%, #ffb347 100%);
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.10);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+            animation: btnPop 1.2s infinite alternate;
+        }
+        .playerBtn:hover {
+            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+            transform: scale(1.12);
+        }
+        @keyframes btnPop {
+            to { transform: scale(1.08);}
+        }
+        #resultsDiv {
+            background: #fffbe6;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            margin: 30px auto;
+            padding: 30px 20px;
+            max-width: 500px;
+            border: 3px solid #43e97b;
+            font-size: 1.3em;
+            color: #43e97b;
+            font-weight: bold;
+            animation: fadeIn 1s;
+        }
+        #restartBtn {
+            background: linear-gradient(90deg, #6dd5ed 0%, #f7797d 100%);
+            color: #fff;
+            margin-top: 20px;
+            font-size: 1.3em;
+            padding: 14px 44px;
+            border-radius: 14px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.10);
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        #restartBtn:hover {
+            background: linear-gradient(90deg, #ffb347 0%, #ff6f61 100%);
+            transform: scale(1.07);
+        }
+        @media (max-width: 900px) {
+            .playerDiv { width: 90vw; margin: 20px auto; display: block;}
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        <img src="https://cdn.pixabay.com/photo/2013/07/13/12/46/clock-160130_1280.png" class="cartoon" alt="Clock">
+        2 Player Stopwatch Game
+        <img src="https://cdn.pixabay.com/photo/2017/01/31/13/14/animal-2023924_1280.png" class="cartoon" alt="Cartoon">
+    </h1>
+    <div id="targetTimeDiv">
+        <span id="targetTime"></span>
+        <br>
+        <span style="font-size:1em;color:#888;">Memorize the target time!</span>
+    </div>
+    <div id="gameArea" class="hidden">
+        <div class="playerDiv" id="player1Div">
+            <img src="https://cdn.pixabay.com/photo/2017/01/31/13/14/animal-2023924_1280.png" class="cartoon" alt="Player 1">
+            <p style="color:#6dd5ed;font-weight:bold;">Player 1</p>
+            <button class="playerBtn" id="player1Btn">STOP!</button>
+            <div id="player1Status"></div>
+        </div>
+        <div class="playerDiv player2" id="player2Div">
+            <img src="https://cdn.pixabay.com/photo/2017/01/31/13/14/animal-2023924_1280.png" class="cartoon" alt="Player 2">
+            <p style="color:#f7797d;font-weight:bold;">Player 2</p>
+            <button class="playerBtn" id="player2Btn">STOP!</button>
+            <div id="player2Status"></div>
+        </div>
+    </div>
+    <div id="resultsDiv" class="hidden"></div>
+    <button id="restartBtn" class="hidden">Restart</button>
+
+    <script>
+        let targetTime = Math.floor(Math.random() * 20) + 1;
+        let startTime, stopTime1 = null, stopTime2 = null;
+
+        document.getElementById('targetTime').textContent = "Target time (seconds): " + targetTime;
+
+        setTimeout(() => {
+            document.getElementById('targetTimeDiv').classList.add('hidden');
+            document.getElementById('gameArea').classList.remove('hidden');
+            startTime = Date.now();
+        }, 3000);
+
+        document.getElementById('player1Btn').onclick = function() {
+            if (!stopTime1) {
+                stopTime1 = Date.now();
+                document.getElementById('player1Btn').disabled = true;
+                document.getElementById('player1Btn').style.opacity = "0.6";
+                document.getElementById('player1Status').innerHTML = "<span style='color:#6dd5ed;font-size:1.1em;'>Stopped!</span>";
+                checkBothStopped();
+            }
+        };
+        document.getElementById('player2Btn').onclick = function() {
+            if (!stopTime2) {
+                stopTime2 = Date.now();
+                document.getElementById('player2Btn').disabled = true;
+                document.getElementById('player2Btn').style.opacity = "0.6";
+                document.getElementById('player2Status').innerHTML = "<span style='color:#f7797d;font-size:1.1em;'>Stopped!</span>";
+                checkBothStopped();
+            }
+        };
+
+        function checkBothStopped() {
+            if (stopTime1 && stopTime2) {
+                setTimeout(showResults, 700);
+            }
+        }
+
+        function showResults() {
+            let time1 = (stopTime1 - startTime) / 1000;
+            let time2 = (stopTime2 - startTime) / 1000;
+            let diff1 = Math.abs(time1 - targetTime);
+            let diff2 = Math.abs(time2 - targetTime);
+
+            let resultText = `
+                <span style="color:#ffb347;">Target time:</span> <b>${targetTime} seconds</b><br>
+                <span style="color:#6dd5ed;">Player 1 stopped at:</span> <b>${time1.toFixed(2)} seconds</b> (diff: <b>${diff1.toFixed(2)}</b>)<br>
+                <span style="color:#f7797d;">Player 2 stopped at:</span> <b>${time2.toFixed(2)} seconds</b> (diff: <b>${diff2.toFixed(2)}</b>)<br>
+            `;
+
+            if (diff1 < diff2) resultText += "<br><span style='color:#43e97b;font-size:1.3em;'>🏆 Player 1 wins!</span>";
+            else if (diff2 < diff1) resultText += "<br><span style='color:#43e97b;font-size:1.3em;'>🏆 Player 2 wins!</span>";
+            else resultText += "<br><span style='color:#ff6f61;font-size:1.3em;'>🤝 It's a tie!</span>";
+
+            document.getElementById('gameArea').classList.add('hidden');
+            document.getElementById('resultsDiv').innerHTML = resultText;
+            document.getElementById('resultsDiv').classList.remove('hidden');
+            document.getElementById('restartBtn').classList.remove('hidden');
+        }
+
+        document.getElementById('restartBtn').onclick = function() {
+            location.reload();
+        };
+    </script>
+</body>
+</html>
